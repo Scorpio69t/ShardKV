@@ -1,19 +1,20 @@
 package shardkv
 
-import "../shardmaster"
 import (
-	"../labrpc"
+	"bytes"
+	"cs651/labrpc"
+	"cs651/shardmaster"
+	"fmt"
 	"log"
-)
-import "../raft"
-import "sync"
-import "../labgob"
-import "time"
-import "bytes"
-import "sync/atomic"
-import "fmt"
+	"sync"
+	"sync/atomic"
+	"time"
 
-const Debug = 1
+	"cs651/labgob"
+	"cs651/raft"
+)
+
+const Debug = 0
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug > 0 {
@@ -263,12 +264,10 @@ func (kv *ShardKV) GetMigration(args *GetMigrationArgs, reply *GetMigrationReply
 
 }
 
-//
 // the tester calls Kill() when a ShardKV instance won't
 // be needed again. you are not required to do anything
 // in Kill(), but it might be convenient to (for example)
 // turn off debug output from this instance.
-//
 func (kv *ShardKV) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
@@ -280,7 +279,6 @@ func (kv *ShardKV) killed() bool {
 	return z == 1
 }
 
-//
 // servers[] contains the ports of the servers in this group.
 //
 // me is the index of the current server in servers[].
@@ -307,7 +305,6 @@ func (kv *ShardKV) killed() bool {
 //
 // StartServer() must return quickly, so it should start goroutines
 // for any long-running work.
-//
 func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister, maxraftstate int, gid int, masters []*labrpc.ClientEnd, make_end func(string) *labrpc.ClientEnd) *ShardKV {
 	// call labgob.Register on structures you want
 	// Go's RPC library to marshall/unmarshall.

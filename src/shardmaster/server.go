@@ -1,12 +1,14 @@
 package shardmaster
 
-import "../raft"
-import "../labrpc"
-import "sync"
-import "../labgob"
-import "log"
-import "time"
-import "sort"
+import (
+	"cs651/labgob"
+	"cs651/labrpc"
+	"cs651/raft"
+	"log"
+	"sort"
+	"sync"
+	"time"
+)
 
 const Debug = 0
 
@@ -76,11 +78,11 @@ func (sm *ShardMaster) rebalance(config *Config) {
 
 }
 
-//The Join RPC is used by an administrator to add new replica groups
-//Its argument is a set of mappings from unique, non-zero replica group identifiers (GIDs) to lists of server names.
-//The shardmaster should react by creating a new configuration that includes the new replica groups.
-//The new configuration should divide the shards as evenly as possible among the full set of groups,
-//and should move as few shards as possible to achieve that goal.
+// The Join RPC is used by an administrator to add new replica groups
+// Its argument is a set of mappings from unique, non-zero replica group identifiers (GIDs) to lists of server names.
+// The shardmaster should react by creating a new configuration that includes the new replica groups.
+// The new configuration should divide the shards as evenly as possible among the full set of groups,
+// and should move as few shards as possible to achieve that goal.
 func (sm *ShardMaster) handleJoinOp(op *Op) {
 
 	lastIndex := len(sm.configs) - 1
@@ -104,11 +106,11 @@ func (sm *ShardMaster) handleJoinOp(op *Op) {
 	// new shard info
 }
 
-//The Leave RPC's argument is a list of GIDs of previously joined groups.
-//The shardmaster should create a new configuration that does not include those groups,
-//and that assigns those groups' shards to the remaining groups
-//The new configuration should divide the shards as evenly as possible among the groups,
-//and should move as few shards as possible to achieve that goal.
+// The Leave RPC's argument is a list of GIDs of previously joined groups.
+// The shardmaster should create a new configuration that does not include those groups,
+// and that assigns those groups' shards to the remaining groups
+// The new configuration should divide the shards as evenly as possible among the groups,
+// and should move as few shards as possible to achieve that goal.
 func (sm *ShardMaster) handleLeaveOp(op *Op) {
 	lastIndex := len(sm.configs) - 1
 	config := Config{}
@@ -130,10 +132,10 @@ func (sm *ShardMaster) handleLeaveOp(op *Op) {
 
 }
 
-//The Move RPC's arguments are a shard number and a GID.
-//The shardmaster should create a new configuration in which the shard is assigned to the group.
-//The purpose of Move is to allow us to test your software.
-//A Join or Leave following a Move will likely un-do the Move, since Join and Leave re-balance.
+// The Move RPC's arguments are a shard number and a GID.
+// The shardmaster should create a new configuration in which the shard is assigned to the group.
+// The purpose of Move is to allow us to test your software.
+// A Join or Leave following a Move will likely un-do the Move, since Join and Leave re-balance.
 func (sm *ShardMaster) handleMoveOp(op *Op) {
 	lastIndex := len(sm.configs) - 1
 	config := Config{}
@@ -153,10 +155,10 @@ func (sm *ShardMaster) handleMoveOp(op *Op) {
 	sm.configs = append(sm.configs, config)
 }
 
-//The Query RPC's argument is a configuration number.
-//The shardmaster replies with the configuration that has that number.
-//If the number is -1 or bigger than the biggest known configuration number,
-//the shardmaster should reply with the latest configuration.
+// The Query RPC's argument is a configuration number.
+// The shardmaster replies with the configuration that has that number.
+// If the number is -1 or bigger than the biggest known configuration number,
+// the shardmaster should reply with the latest configuration.
 func (sm *ShardMaster) handleQueryOp(op *Op) {
 
 	if op.QueryNum == -1 || op.QueryNum > sm.configs[len(sm.configs)-1].Num {
@@ -417,12 +419,10 @@ func (sm *ShardMaster) Query(args *QueryArgs, reply *QueryReply) {
 
 }
 
-//
 // the tester calls Kill() when a ShardMaster instance won't
 // be needed again. you are not required to do anything
 // in Kill(), but it might be convenient to (for example)
 // turn off debug output from this instance.
-//
 func (sm *ShardMaster) Kill() {
 	sm.rf.Kill()
 	sm.killed = true
@@ -481,12 +481,10 @@ func (sm *ShardMaster) applyLog() {
 	}
 }
 
-//
 // servers[] contains the ports of the set of
 // servers that will cooperate via Paxos to
 // form the fault-tolerant shardmaster service.
 // me is the index of the current server in servers[].
-//
 func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister) *ShardMaster {
 	sm := new(ShardMaster)
 	sm.me = me

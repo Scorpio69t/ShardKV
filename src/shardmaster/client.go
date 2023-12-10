@@ -4,11 +4,13 @@ package shardmaster
 // Shardmaster clerk.
 //
 
-import "../labrpc"
-import "time"
-import "crypto/rand"
-import "math/big"
-import "sync"
+import (
+	"crypto/rand"
+	"cs651/labrpc"
+	"math/big"
+	"sync"
+	"time"
+)
 
 type Clerk struct {
 	servers []*labrpc.ClientEnd
@@ -36,10 +38,10 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	return ck
 }
 
-//The Query RPC's argument is a configuration number.
-//The shardmaster replies with the configuration that has that number.
-//If the number is -1 or bigger than the biggest known configuration number,
-//the shardmaster should reply with the latest configuration.
+// The Query RPC's argument is a configuration number.
+// The shardmaster replies with the configuration that has that number.
+// If the number is -1 or bigger than the biggest known configuration number,
+// the shardmaster should reply with the latest configuration.
 func (ck *Clerk) Query(num int) Config {
 	args := &QueryArgs{}
 	// Your code here.
@@ -62,11 +64,11 @@ func (ck *Clerk) Query(num int) Config {
 	}
 }
 
-//The Join RPC is used by an administrator to add new replica groups
-//Its argument is a set of mappings from unique, non-zero replica group identifiers (GIDs) to lists of server names.
-//The shardmaster should react by creating a new configuration that includes the new replica groups.
-//The new configuration should divide the shards as evenly as possible among the full set of groups,
-//and should move as few shards as possible to achieve that goal.
+// The Join RPC is used by an administrator to add new replica groups
+// Its argument is a set of mappings from unique, non-zero replica group identifiers (GIDs) to lists of server names.
+// The shardmaster should react by creating a new configuration that includes the new replica groups.
+// The new configuration should divide the shards as evenly as possible among the full set of groups,
+// and should move as few shards as possible to achieve that goal.
 func (ck *Clerk) Join(servers map[int][]string) {
 	args := &JoinArgs{}
 	// Your code here.
@@ -90,11 +92,11 @@ func (ck *Clerk) Join(servers map[int][]string) {
 	}
 }
 
-//The Leave RPC's argument is a list of GIDs of previously joined groups.
-//The shardmaster should create a new configuration that does not include those groups,
-//and that assigns those groups' shards to the remaining groups
-//The new configuration should divide the shards as evenly as possible among the groups,
-//and should move as few shards as possible to achieve that goal.
+// The Leave RPC's argument is a list of GIDs of previously joined groups.
+// The shardmaster should create a new configuration that does not include those groups,
+// and that assigns those groups' shards to the remaining groups
+// The new configuration should divide the shards as evenly as possible among the groups,
+// and should move as few shards as possible to achieve that goal.
 func (ck *Clerk) Leave(gids []int) {
 	args := &LeaveArgs{}
 	// Your code here.
@@ -118,10 +120,10 @@ func (ck *Clerk) Leave(gids []int) {
 	}
 }
 
-//The Move RPC's arguments are a shard number and a GID.
-//The shardmaster should create a new configuration in which the shard is assigned to the group.
-//The purpose of Move is to allow us to test your software.
-//A Join or Leave following a Move will likely un-do the Move, since Join and Leave re-balance.
+// The Move RPC's arguments are a shard number and a GID.
+// The shardmaster should create a new configuration in which the shard is assigned to the group.
+// The purpose of Move is to allow us to test your software.
+// A Join or Leave following a Move will likely un-do the Move, since Join and Leave re-balance.
 func (ck *Clerk) Move(shard int, gid int) {
 	args := &MoveArgs{}
 	// Your code here.
